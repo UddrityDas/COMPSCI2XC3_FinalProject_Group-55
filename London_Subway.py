@@ -3,6 +3,7 @@ import math
 import time
 from A_Star import A_Star, manhattan_heuristic, euclidean_heuristic, diagonal_heuristic
 from London_Dijkstra import dijkstra
+from Draw_plot import draw_plot
 
 def load_stations(file):
     stations = {}
@@ -55,9 +56,11 @@ def make_heuristic(stations, goal_id, heuristic_type):
         heuristic = manhattan_heuristic(goal_id, node_positions)
         return heuristic
     elif heuristic_type == 'euclidean':
-        return lambda node_id: euclidean_heuristic(goal_id, node_positions)
+        heuristic = euclidean_heuristic(goal_id, node_positions)
+        return heuristic
     elif heuristic_type == 'diagonal':
-        return lambda node_id: diagonal_heuristic(goal_id, node_positions)
+        heuristic = diagonal_heuristic(goal_id, node_positions)
+        return heuristic
     else:
         raise ValueError("Unknown heuristic type")
 
@@ -94,7 +97,7 @@ def compare_algorithms(station_file, connection_file):
         for j in range(i + 1, len(station_ids)):
             src = station_ids[i]
             dst = station_ids[j]
-            heuristic = make_heuristic(stations, dst, 'manhattan') #select a heuristic type manually
+            heuristic = make_heuristic(stations, dst, 'euclidean') #select a heuristic type manually
 
             start = time.time()
             path_a = A_Star(graph, src, dst, heuristic)
@@ -116,6 +119,14 @@ def compare_algorithms(station_file, connection_file):
                 'a_star_lines': count_line_changes(path_a, graph, stations),
                 'dijkstra_lines': count_line_changes(path_d, graph, stations)
             })
+
+    a_star_times = [r['a_star_time'] for r in results]
+    dijkstra_times = [r['dijkstra_time'] for r in results]
+
+    draw_plot({
+        "A*": a_star_times,
+        "Dijkstra": dijkstra_times
+    }, "London Subway Station Pairs")
 
     for r in results:
         print(f"{r['src']} -> {r['dst']}")

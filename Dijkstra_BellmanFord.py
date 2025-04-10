@@ -6,9 +6,11 @@ import random
 
 class DirectedWeightedGraph:
 
-    def __init__(self,):
+    def __init__(self, nodes):
         self.adj = {}
         self.weights = {}
+        for node in range(nodes):
+            self.adj[node] = []
 
     def are_connected(self, node1, node2):
         for neighbour in self.adj[node1]:
@@ -20,7 +22,8 @@ class DirectedWeightedGraph:
         return self.adj[node]
 
     def add_node(self, node):
-        self.adj[node] = []
+        if node not in self.adj:
+            self.adj[node] = []
 
     def add_edge(self, node1, node2, weight):
         if node2 not in self.adj[node1]:
@@ -92,7 +95,7 @@ def create_random_directed_graph(nodes, edges, max_weight):
     if edges > nodes * (nodes - 1):
         raise ValueError("Edges exceed the possible number for the given nodes")
 
-    g = DirectedWeightedGraph()
+    g = DirectedWeightedGraph(nodes)
     edge_set = set()
 
     while len(edge_set) < edges:
@@ -173,28 +176,11 @@ def bellman_ford(G, source, k):
 
     return distances, paths
 
-G = DirectedWeightedGraph()
-for i in range(5):
-    G.add_node(i)
-
-G.add_edge(0, 1, 4)
-G.add_edge(0, 2, 1)
-G.add_edge(2, 1, 2)
-G.add_edge(1, 3, 1)
-G.add_edge(2, 3, 5)
-G.add_edge(3, 4, 3)
-
-source = 0
-k = 4
-
-print("Dijkstra Output:", dijkstra(G, source, k))
-print("Bellman-Ford Output:", bellman_ford(G, source, k))
-
 
 def experiment():
     trials = 50
-    nodes = 7
-    edges = 21
+    nodes = 10
+    edges = 45
 
     dijkstraTimes = []
     bellmanTimes = []
@@ -204,7 +190,7 @@ def experiment():
         randCopy = copy.copy(randGraph)
 
         source = random.choice(list(randGraph.adj.keys()))
-        k = 4  #set relaxation limit
+        k = 2  #set relaxation limit
 
         start = time.time()
         dijkstra(randCopy,source,k)
@@ -219,6 +205,9 @@ def experiment():
             "Dijkstra": dijkstraTimes,
             "Bellman-Ford": bellmanTimes
         }, "Experiment 2.3")
+
+    print("Dijkstra Output:", dijkstra(randCopy, source, k))
+    print("Bellman-Ford Output:", bellman_ford(randCopy, source, k))
 
     return 0
 

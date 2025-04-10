@@ -42,16 +42,7 @@ def johnsons(G):
 
 
 def test_johnsons():
-    G = DirectedWeightedGraph()
-    
-    for i in range(4):
-        G.add_node(i)
-    
-    G.add_edge(0, 1, 4)
-    #G.add_edge(0, 2, 1)
-    #G.add_edge(1, 2, 3)
-    G.add_edge(1, 3, 2)
-    G.add_edge(3, 2, 5)
+    G = create_random_directed_graph(10,15,25)
     
     shortest_paths = johnsons(G)
     
